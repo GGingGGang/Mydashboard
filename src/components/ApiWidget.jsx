@@ -24,12 +24,25 @@ export default function ApiWidget({ props, onChange }) {
     return result;
   };
 
+  // const sendRequest = async () => {
+  //   try {
+  //     const finalUrl = replaceEnvInUrl(localProps.url);
+  //     const res = await fetch(finalUrl, {
+  //       method: 'GET',
+  //       headers: localProps.headers ? JSON.parse(localProps.headers) : {}
+  //     });
+  //     const text = await res.text();
+  //     handleChange('result', text);
+  //   } catch (e) {
+  //     handleChange('result', '요청 실패: ' + e.message);
+  //   }
+  // };
   const sendRequest = async () => {
     try {
       const finalUrl = replaceEnvInUrl(localProps.url);
-      const res = await fetch(finalUrl, {
+      const encodedUrl = encodeURIComponent(finalUrl);
+      const res = await fetch(`/api/proxy?url=${encodedUrl}`, {
         method: 'GET',
-        headers: localProps.headers ? JSON.parse(localProps.headers) : {}
       });
       const text = await res.text();
       handleChange('result', text);
@@ -37,6 +50,7 @@ export default function ApiWidget({ props, onChange }) {
       handleChange('result', '요청 실패: ' + e.message);
     }
   };
+
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(localProps.result || '')
