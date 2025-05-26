@@ -4,9 +4,12 @@ import { Rnd } from 'react-rnd';
 import { saveWidgets, loadWidgets } from './utils/storage';
 import MemoWidget from './components/MemoWidget';
 import ApiWidget from './components/ApiWidget';
+import TimerWidget from './components/TimerWidget';
+
 
 export default function App() {
   const [widgets, setWidgets] = useState(loadWidgets());
+  const [resizable, setResizable] = useState(true);
 
   const addWidget = (type = 'memo', props = {}) => {
     const newWidget = {
@@ -63,26 +66,36 @@ export default function App() {
 
   return (
     <div className="w-screen h-screen bg-gray-100">
-      <header className="p-4 text-xl font-bold border-b bg-white shadow flex justify-between">
-        🧩 mydashboard.io
+      <header className="p-4 text-xl font-bold border-b bg-white shadow flex items-center gap-4">
+        <span className="mr-4">🧩 mydashboard.io</span>
         <button
           onClick={() => addWidget('memo', { content: '' })}
-          className="bg-yellow-400 px-3 py-1 rounded"
+          className="bg-yellow-400 px-3 py-1 rounded text-base font-normal"
         >
           + Add Memo
         </button>
         <button
           onClick={() => addWidget('api', { url: '', headers: '', body: '', method: 'GET', result: '' })}
-          className="bg-blue-500 text-white px-3 py-1 rounded"
+          className="bg-blue-500 text-white px-3 py-1 rounded text-base font-normal"
         >
           + Add API
         </button>
         <button
-          onClick={() => setShowApiModal(true)} // 모달을 열기 위한 state 설정 필요
-          className="bg-purple-500 text-white px-3 py-1 rounded"
+          onClick={() => addWidget('timer')}
+          className="bg-green-500 text-white px-3 py-1 rounded text-base font-normal"
         >
-          Req API
+          + Add Timer
         </button>
+        
+        <label className="flex items-center gap-2 text-base ml-4">
+          🔧 크기 조절
+          <input
+            type="checkbox"
+            checked={resizable}
+            onChange={(e) => setResizable(e.target.checked)}
+          />
+        </label>
+
       </header>
 
       <main className="w-full h-[calc(100vh-4rem)] bg-white overflow-hidden p-4 relative" id="canvas">
@@ -96,6 +109,8 @@ export default function App() {
               height: widget.height,
             }}
             bounds="parent"
+            enableResizing={resizable} // ✅ 이 줄 추가
+
             onDragStop={(e, d) => {
               updateWidget(widget.id, { x: d.x, y: d.y });
             }}
@@ -144,6 +159,7 @@ export default function App() {
                     }
                   />
                 )}
+                {widget.type === 'timer' && <TimerWidget />}
               </div>
             </div>
           </Rnd>
