@@ -6,7 +6,7 @@ import MemoWidget from './components/MemoWidget';
 import ApiWidget from './components/ApiWidget';
 import TimerWidget from './components/TimerWidget';
 import TextWidget from './components/TextWidget';
-
+import LineWidget from './components/LineWidget'
 
 export default function App() {
   const [widgets, setWidgets] = useState(loadWidgets());
@@ -17,12 +17,14 @@ export default function App() {
 
   { /* 위젯 관련 */}
   const addWidget = (type = {}, props = {}) => {
-    const width = 280;
+    const width = 
+      type === 'line' ? 10 :
+      280;
     const height =
       type === 'timer' ? 170 :
       type === 'api' ? 335 :
+      type === 'line' ? 400 :
       200;
-
     // 초기 좌표
     let x = 20;
     let y = 20;
@@ -99,19 +101,19 @@ export default function App() {
     setWidgets(updated);
     saveWidgets(updated);
   };
-  // const duplicateWidget = (id) => {
-  //   const original = widgets.find(w => w.id === id);
-  //   if (!original) return;
-  //   const newWidget = {
-  //     ...original,
-  //     id: Date.now().toString(),
-  //     x: original.x + 30,
-  //     y: original.y + 30,
-  //   };
-  //   const updated = [...widgets, newWidget];
-  //   setWidgets(updated);
-  //   saveWidgets(updated);
-  // };
+  const duplicateWidget = (id) => {
+    const original = widgets.find(w => w.id === id);
+    if (!original) return;
+    const newWidget = {
+      ...original,
+      id: Date.now().toString(),
+      x: original.x + 30,
+      y: original.y + 30,
+    };
+    const updated = [...widgets, newWidget];
+    setWidgets(updated);
+    saveWidgets(updated);
+  };
 
   useEffect(() => {
   const html = document.documentElement;
@@ -206,6 +208,10 @@ export default function App() {
             >
               +Text
             </button>
+            <button
+              onClick={() => addWidget('line', { width: 200, height: 100 })}
+              className="bg-pink-500 text-white px-3 py-1 rounded">+Line</button>
+
           </div>
 
           {/* 오른쪽 옵션 토글 */}
@@ -321,7 +327,12 @@ export default function App() {
                   />
                 )}
                 {widget.type === 'timer' && <TimerWidget />}
+                
               </div>
+              {widget.type === 'line' && (
+                  <LineWidget
+                 />
+                )}
             </div>
           </Rnd>
         ))}
