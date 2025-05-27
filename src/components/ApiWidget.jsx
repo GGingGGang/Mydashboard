@@ -26,17 +26,20 @@ export default function ApiWidget({ props, onChange }) {
   const sendRequest = async () => {
     try {
       const finalUrl = replaceEnvInUrl(localProps.url);
+      const headers = replaceEnvInHeaders(localProps.headers);
       const encodedUrl = encodeURIComponent(finalUrl);
+
       const res = await fetch(`/api/proxy?url=${encodedUrl}`, {
         method: 'GET',
+        headers: headers,
       });
+
       const text = await res.text();
       handleChange('result', text);
     } catch (e) {
       handleChange('result', '요청 실패: ' + e.message);
     }
   };
-
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(localProps.result || '')
