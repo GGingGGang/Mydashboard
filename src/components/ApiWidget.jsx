@@ -22,6 +22,13 @@ export default function ApiWidget({ props, onChange }) {
     }
     return result;
   };
+  const replaceEnvInHeaders = (headersText) => {
+    let replaced = headersText;
+    for (const pair of localProps.env) {
+      replaced = replaced.replaceAll(`{${pair.key}}`, pair.value);
+    }
+    return replaced;
+  };
 
   const sendRequest = async () => {
     try {
