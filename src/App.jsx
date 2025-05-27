@@ -210,7 +210,7 @@ export default function App() {
             </button>
             <button
               onClick={() => addWidget('line', { width: 200, height: 100 })}
-              className="bg-pink-500 text-white px-3 py-1 rounded">+Line</button>
+              className="bg-pink-500 text-black px-3 py-1 rounded">+Line</button>
 
           </div>
 
