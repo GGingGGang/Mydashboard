@@ -6,11 +6,20 @@ export function saveWidgets(widgets) {
 
 export function loadWidgets() {
   const data = localStorage.getItem(STORAGE_KEY);
-  if (!data) return [];
+  return data ? JSON.parse(data) : [];
+}
+
+export function exportWidgets() {
+  return localStorage.getItem(STORAGE_KEY) || '[]';
+}
+
+export function importWidgets(json) {
   try {
-    return JSON.parse(data);
-  } catch (err) {
-    console.error('Failed to load widgets:', err);
-    return [];
+    const widgets = JSON.parse(json);
+    saveWidgets(widgets);
+    return widgets;
+  } catch (e) {
+    alert('불러오기 실패: JSON 형식이 올바르지 않습니다.');
+    return null;
   }
 }

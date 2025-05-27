@@ -25,21 +25,29 @@ export default function TimerWidget() {
   };
 
   return (
-    <div style={{
-      border: '1px solid #ccc',
-      borderRadius: '12px',
-      padding: '16px',
-      width: '220px',
-      boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-    }}>
-      <h3>⏱ 타이머</h3>
-      <div style={{ fontSize: '24px', marginBottom: '12px' }}>{formatTime(seconds)}</div>
-      <div style={{ display: 'flex', gap: '8px' }}>
-        <button onClick={() => setRunning(!running)}>
-          {running ? '⏸ 일시정지' : '▶️ 시작'}
+    <div className="w-full h-full flex flex-col justify-between bg-yellow-200 dark:bg-gray-700 text-black dark:text-white p-4 rounded-lg transition-colors duration-300">
+      
+      {/* 타이머 숫자 */}
+      <div className="text-center text-5xl font-extrabold mt-4 mb-6 tracking-wide">
+        {formatTime(seconds)}
+      </div>
+
+      {/* 버튼들 */}
+      <div className="flex justify-between gap-2">
+        <button
+          onClick={() => setRunning(!running)}
+          className="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-gray-600 dark:text-white text-black rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-500"
+        >
+          {running ? '일시정지' : '시작'}
         </button>
-        <button onClick={() => { setSeconds(0); setRunning(false); }}>
-          🔁 리셋
+        <button
+          onClick={() => {
+            setSeconds(0);
+            setRunning(false);
+          }}
+          className="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-gray-600 dark:text-white text-black rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-500"
+        >
+          리셋
         </button>
       </div>
     </div>
