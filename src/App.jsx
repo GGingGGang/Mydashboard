@@ -134,7 +134,7 @@ export default function App() {
         {/* 1줄: 로고 + 기능 버튼 */}
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2 text-black dark:text-white font-bold text-xl">
-            🧩 mydashboard.io
+            🧩 MyDashBoard
           </div>
           <div className="flex items-center gap-2">
             <button
