@@ -13,6 +13,7 @@ export default function App() {
   const [resizable, setResizable] = useState(true);
   const [draggable, setDraggable] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const [deletable, setDeletable] = useState(true);
 
   { /* 위젯 관련 */}
   const addWidget = (type = {}, props = {}) => {
@@ -127,93 +128,113 @@ export default function App() {
 
   return (
     <div className="min-h-screen w-screen bg-gray-100 dark:bg-gray-900 text-black dark:text-white transition-colors duration-300">
-
-      <header className="p-4 text-xl font-bold border-b bg-white dark:bg-gray-800 shadow flex items-center gap-4">
-        <span className="mr-4">🧩 mydashboard.io</span>
-
-        {/* 기존 Add 버튼들 */}
-        <button
-          onClick={() => addWidget('memo', { content: '' })}
-          className="bg-yellow-400 text-black px-3 py-1 rounded text-base font-normal"
-        >
-          + Add Memo
-        </button>
-        <button
-          onClick={() => addWidget('api', { url: '', headers: '', body: '', method: 'GET', result: '' })}
-          className="bg-blue-500 text-black px-3 py-1 rounded text-base font-normal"
-        >
-          + Add API
-        </button>
-        <button
-          onClick={() => addWidget('timer')}
-          className="bg-green-500 text-black px-3 py-1 rounded text-base font-normal"
-        >
-          + Add Timer
-        </button>
-        <button
-          onClick={() => addWidget('text', { content: '텍스트를 입력하세요' })}
-          className="bg-purple-500 text-white px-3 py-1 rounded text-base font-normal"
-        >
-          + Add Text
-        </button>
-        
-        <label className="flex items-center gap-2 text-base ml-4">
-          🔧 Resizable
-          <input
-            type="checkbox"
-            checked={resizable}
-            onChange={(e) => setResizable(e.target.checked)}
-          />
-        </label>
-        <label className="flex items-center gap-2 text-base">
-          🎯 Draggable
-          <input
-            type="checkbox"
-            checked={draggable}
-            onChange={(e) => setDraggable(e.target.checked)}
-          />
-        </label>
-      <div className="flex items-center gap-2 ml-auto">
-          <button
-            onClick={() => {
-              const blob = new Blob([exportWidgets()], { type: 'application/json' });
-              const url = URL.createObjectURL(blob);
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = 'mydashboard_widgets_backup.json';
-              link.click();
-            }}
-            className="bg-gray-300 dark:bg-gray-600 text-black dark:text-white px-3 py-1 rounded"
-          >
-            💾 백업
-          </button>
-
-          <label className="bg-gray-300 dark:bg-gray-600 text-black dark:text-white px-3 py-1 rounded cursor-pointer">
-            📂 불러오기
-            <input
-              type="file"
-              accept="application/json"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                  const json = event.target.result;
-                  const widgets = importWidgets(json);
-                  if (widgets) setWidgets(widgets);
-                };
-                reader.readAsText(file);
+      <header className="p-4 text-sm font-bold border-b border-black/20 dark:border-white/40 bg-white dark:bg-gray-800 shadow space-y-3">
+        {/* 1줄: 로고 + 기능 버튼 */}
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 text-black dark:text-white font-bold text-xl">
+            🧩 mydashboard.io
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const blob = new Blob([exportWidgets()], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'mydashboard_widgets_backup.json';
+                link.click();
               }}
-            />
-          </label>
+              className="bg-gray-300 dark:bg-gray-600 text-black dark:text-white px-3 py-1 rounded"
+            >
+              💾 백업
+            </button>
 
-          <button
-            onClick={toggleDarkMode}
-            className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700"
-          >
-            {darkMode ? '☀️ 라이트 모드' : '🌙 다크 모드'}
-          </button>
+            <label className="bg-gray-300 dark:bg-gray-600 text-black dark:text-white px-3 py-1 rounded cursor-pointer">
+              📂 불러오기
+              <input
+                type="file"
+                accept="application/json"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    const json = event.target.result;
+                    const widgets = importWidgets(json);
+                    if (widgets) setWidgets(widgets);
+                  };
+                  reader.readAsText(file);
+                }}
+              />
+            </label>
+
+            <button
+              onClick={toggleDarkMode}
+              className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700"
+            >
+              {darkMode ? '☀️ 라이트 모드' : '🌙 다크 모드'}
+            </button>
+          </div>
+        </div>
+
+        {/* 2줄: Add 버튼들 왼쪽 + 옵션 오른쪽 */}
+        <div className="flex justify-between flex-wrap items-center gap-3">
+          {/* 왼쪽 Add 버튼 */}
+          <div className="flex gap-2 text-base font-normal">
+            <button
+              onClick={() => addWidget('memo', { content: '' })}
+              className="bg-yellow-400 text-black px-3 py-1 rounded"
+            >
+              +Memo
+            </button>
+            <button
+              onClick={() => addWidget('api', { url: '', headers: '', body: '', method: 'GET', result: '' })}
+              className="bg-blue-500 text-black px-3 py-1 rounded"
+            >
+              +API
+            </button>
+            <button
+              onClick={() => addWidget('timer')}
+              className="bg-green-500 text-black px-3 py-1 rounded"
+            >
+              +Timer
+            </button>
+            <button
+              onClick={() => addWidget('text', { content: '텍스트를 입력하세요' })}
+              className="bg-purple-500 text-black px-3 py-1 rounded"
+            >
+              +Text
+            </button>
+          </div>
+
+          {/* 오른쪽 옵션 토글 */}
+          <div className="flex items-center gap-4 text-sm text-black dark:text-white">
+            <label className="flex items-center gap-1">
+              🗑️ Deletable
+              <input
+                type="checkbox"
+                checked={deletable}
+                onChange={(e) => setDeletable(e.target.checked)}
+              />
+            </label>
+            <label className="flex items-center gap-1">
+              🔧 Resizable
+              <input
+                type="checkbox"
+                checked={resizable}
+                onChange={(e) => setResizable(e.target.checked)}
+              />
+            </label>
+            <label className="flex items-center gap-1">
+              🎯 Draggable
+              <input
+                type="checkbox"
+                checked={draggable}
+                onChange={(e) => setDraggable(e.target.checked)}
+              />
+            </label>
+          </div>
         </div>
       </header>
 
@@ -248,6 +269,8 @@ export default function App() {
                : 'bg-yellow-200 dark:bg-gray-700 dark:text-white shadow rounded'
             }
           >
+
+
             <div className="relative w-full h-full">
               <div className="absolute top-1 right-1 flex gap-1 z-10">
                 {/* <button
@@ -256,12 +279,14 @@ export default function App() {
                 >
                   🧬
                 </button> */}
-                <button
-                  onClick={() => deleteWidget(widget.id)}
-                  className="text-xs px-1 bg-red-300 hover:bg-red-400 rounded"
-                >
-                  ❌
-                </button>
+                {deletable && (
+                  <button
+                    onClick={() => deleteWidget(widget.id)}
+                    className="text-xs px-1 bg-red-300 hover:bg-red-400 rounded"
+                  >
+                    ❌
+                  </button>
+                )}
               </div>
               <div className="w-full h-full p-2 overflow-hidden">
                 {widget.type === 'memo' && (
