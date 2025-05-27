@@ -22,23 +22,37 @@ export default function ApiWidget({ props, onChange }) {
     }
     return result;
   };
+
   const replaceEnvInHeaders = (headersText) => {
-    let replaced = headersText;
+    let result = headersText;
     for (const pair of localProps.env) {
-      replaced = replaced.replaceAll(`{${pair.key}}`, pair.value);
+      result = result.replaceAll(`{${pair.key}}`, pair.value);
     }
-    return replaced;
+    return result;
   };
 
   const sendRequest = async () => {
     try {
+      // URL 치환
       const finalUrl = replaceEnvInUrl(localProps.url);
-      const headers = replaceEnvInHeaders(localProps.headers);
       const encodedUrl = encodeURIComponent(finalUrl);
 
+      // 헤더 치환 후 JSON 파싱
+      let parsedHeaders = {};
+      if (localProps.headers && localProps.headers.trim() !== '') {
+        try {
+          const replacedHeaderText = replaceEnvInHeaders(localProps.headers);
+          parsedHeaders = JSON.parse(replacedHeaderText);
+        } catch (e) {
+          handleChange('result', '❌ Header JSON 파싱 실패: ' + e.message);
+          return;
+        }
+      }
+
+      // 요청 보내기
       const res = await fetch(`/api/proxy?url=${encodedUrl}`, {
         method: 'GET',
-        headers: headers,
+        headers: parsedHeaders,
       });
 
       const text = await res.text();
@@ -47,6 +61,7 @@ export default function ApiWidget({ props, onChange }) {
       handleChange('result', '요청 실패: ' + e.message);
     }
   };
+
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(localProps.result || '')
