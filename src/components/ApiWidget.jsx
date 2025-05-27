@@ -112,21 +112,28 @@ export default function ApiWidget({ props, onChange }) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="border border-black dark:border-white px-2 py-1">
-                  <input
-                    className="w-full px-1 py-0.5 rounded bg-yellow-100 dark:bg-gray-800 text-black dark:text-white"
-                  />
-                </td>
-                <td className="border border-black dark:border-white px-2 py-1">
-                  <input
-                    className="w-full px-1 py-0.5 rounded bg-yellow-100 dark:bg-gray-800 text-black dark:text-white"
-                  />
-                </td>
-                <td className="border border-black dark:border-white px-2 py-1 text-center whitespace-nowrap text-red-600">
-                  삭제
-                </td>
-              </tr>
+              {localProps.env.map((pair, index) => (
+                <tr key={index}>
+                  <td className="border border-black dark:border-white px-2 py-1">
+                    <input
+                      className="w-full px-1 py-0.5 rounded bg-yellow-100 dark:bg-gray-800 text-black dark:text-white"
+                      value={pair.key}
+                      onChange={(e) => updateEnv(index, 'key', e.target.value)}
+                    />
+                  </td>
+                  <td className="border border-black dark:border-white px-2 py-1">
+                    <input
+                      className="w-full px-1 py-0.5 rounded bg-yellow-100 dark:bg-gray-800 text-black dark:text-white"
+                      value={pair.value}
+                      onChange={(e) => updateEnv(index, 'value', e.target.value)}
+                    />
+                  </td>
+                  <td className="border border-black dark:border-white px-2 py-1 text-center text-red-600 cursor-pointer"
+                      onClick={() => deleteEnv(index)}>
+                    삭제
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
           <button
