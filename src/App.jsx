@@ -5,6 +5,7 @@ import {saveWidgets, loadWidgets, exportWidgets, importWidgets} from './utils/st
 import MemoWidget from './components/MemoWidget';
 import ApiWidget from './components/ApiWidget';
 import TimerWidget from './components/TimerWidget';
+import TextWidget from './components/TextWidget';
 
 
 export default function App() {
@@ -149,6 +150,12 @@ export default function App() {
         >
           + Add Timer
         </button>
+        <button
+          onClick={() => addWidget('text', { content: '텍스트를 입력하세요' })}
+          className="bg-purple-500 text-white px-3 py-1 rounded text-base font-normal"
+        >
+          + Add Text
+        </button>
         
         <label className="flex items-center gap-2 text-base ml-4">
           🔧 Resizable
@@ -233,7 +240,13 @@ export default function App() {
                 ...position,
               });
             }}
-            className="bg-yellow-200 dark:bg-gray-700 dark:text-white shadow rounded"
+            className={
+              widget.type === 'text'
+                ? `bg-transparent ${
+                          resizable ? 'border border-black dark:border-white' : 'border-none'
+                        } text-black dark:text-white shadow-none`
+               : 'bg-yellow-200 dark:bg-gray-700 dark:text-white shadow rounded'
+            }
           >
             <div className="relative w-full h-full">
               <div className="absolute top-1 right-1 flex gap-1 z-10">
@@ -268,6 +281,17 @@ export default function App() {
                     props={widget.props}
                     onChange={(newProps) =>
                       updateWidgetProps(widget.id, newProps)
+                    }
+                  />
+                )}
+                {widget.type === 'text' && (
+                  <TextWidget
+                    value={widget.props.content}
+                    onChange={(newContent) =>
+                      updateWidgetProps(widget.id, {
+                        ...widget.props,
+                        content: newContent,
+                      })
                     }
                   />
                 )}
